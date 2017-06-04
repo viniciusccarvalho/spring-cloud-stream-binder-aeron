@@ -1,0 +1,6 @@
+# spring-cloud-stream-binder-aeron
+Brokerless binder experiment
+
+This project depends on a snapshot build of https://github.com/real-logic/Aeron[Aeron]
+
+Please download and build that project before building this project.
