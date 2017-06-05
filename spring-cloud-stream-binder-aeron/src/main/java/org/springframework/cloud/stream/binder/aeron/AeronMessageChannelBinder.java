@@ -42,13 +42,13 @@ public class AeronMessageChannelBinder extends AbstractMessageChannelBinder<Exte
 	@Override
 	protected MessageHandler createProducerMessageHandler(ProducerDestination producerDestination, ExtendedProducerProperties<AeronProducerProperties> extendedProducerProperties) throws Exception {
 		AeronMessageHandler messageHandler = new AeronMessageHandler((AeronProducerDestination)producerDestination,aeron);
-//		messageHandler.afterPropertiesSet();
 		return messageHandler;
 	}
 
 	@Override
-	protected MessageProducer createConsumerEndpoint(ConsumerDestination consumerDestination, String s, ExtendedConsumerProperties<AeronConsumerProperties> consumerProperties) throws Exception {
-		return null;
+	protected MessageProducer createConsumerEndpoint(ConsumerDestination consumerDestination, String group, ExtendedConsumerProperties<AeronConsumerProperties> consumerProperties) throws Exception {
+		AeronMessageContainer messageContainer = new AeronMessageContainer(this.aeron,consumerDestination.getName(),consumerProperties.getExtension().getStreamId());
+		return messageContainer;
 	}
 
 	@Override

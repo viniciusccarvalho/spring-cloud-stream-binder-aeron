@@ -24,7 +24,7 @@ public class AeronProducerDestination implements ProducerDestination {
 	 * Returns the control channel configuration for a Producer. Use getDestinations() for the list of possible destinations
 	 */
 	public String getName() {
-		return String.format(this.controlConnection, this.producerProperties.getControlHost(), this.producerProperties.getControlPort());
+		return String.format(this.controlConnection, this.producerProperties.getHost(), this.producerProperties.getPort());
 	}
 
 	@Override

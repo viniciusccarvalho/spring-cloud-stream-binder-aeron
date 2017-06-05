@@ -20,8 +20,8 @@ public class AeronDestinationProvisioner implements
 	public ProducerDestination provisionProducerDestination(String name,
 			ExtendedProducerProperties<AeronProducerProperties> producerProperties)
 			throws ProvisioningException {
-		if(producerProperties.getExtension().getControlPort() == -1){
-			producerProperties.getExtension().setControlPort(SocketUtils.findAvailableTcpPort(43_000,43_100));
+		if(producerProperties.getExtension().getPort() == -1){
+			producerProperties.getExtension().setPort(SocketUtils.findAvailableTcpPort(43_000,43_100));
 		}
 		return new AeronProducerDestination(producerProperties.getExtension());
 	}
@@ -30,6 +30,9 @@ public class AeronDestinationProvisioner implements
 	public ConsumerDestination provisionConsumerDestination(String name, String group,
 			ExtendedConsumerProperties<AeronConsumerProperties> consumerProperties)
 			throws ProvisioningException {
-		return null;
+		if(consumerProperties.getExtension().getPort() == -1){
+			consumerProperties.getExtension().setPort(SocketUtils.findAvailableTcpPort(42_000,42_100));
+		}
+		return new AeronConsumerDestination(consumerProperties.getExtension());
 	}
 }
