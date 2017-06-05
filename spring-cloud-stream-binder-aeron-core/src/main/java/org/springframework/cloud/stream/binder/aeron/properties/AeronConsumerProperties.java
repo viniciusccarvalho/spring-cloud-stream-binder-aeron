@@ -10,7 +10,7 @@ public class AeronConsumerProperties {
 	private Integer streamId = 1;
 
 	public Integer getStreamId() {
-		return streamId;
+		return this.streamId;
 	}
 
 	public void setStreamId(Integer streamId) {
@@ -18,7 +18,7 @@ public class AeronConsumerProperties {
 	}
 
 	public Integer getPort() {
-		return port;
+		return this.port;
 	}
 
 	public void setPort(Integer port) {

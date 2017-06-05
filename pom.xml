@@ -22,6 +22,11 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-stream-binder-aeron</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-stream-codec</artifactId>
 				<version>${spring-cloud-stream.version}</version>
 			</dependency>
@@ -37,12 +42,18 @@
 				<version>${spring-cloud-stream.version}</version>
 				<scope>test</scope>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-starter-stream-aeron</artifactId>
+				<version>${project.version}</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<modules>
 		<module>spring-cloud-stream-binder-aeron</module>
 		<module>spring-cloud-stream-binder-aeron-core</module>
 		<module>spring-cloud-starter-stream-aeron</module>
+		<module>samples</module>
 	</modules>
 	<build>
 		<pluginManagement>

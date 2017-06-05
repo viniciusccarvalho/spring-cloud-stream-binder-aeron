@@ -8,7 +8,7 @@ public class DestinationRegistrationEvent {
 	private RegistrationType registrationType;
 
 	public AeronChannelInformation getInformation() {
-		return information;
+		return this.information;
 	}
 
 	public void setInformation(AeronChannelInformation information) {
@@ -16,7 +16,7 @@ public class DestinationRegistrationEvent {
 	}
 
 	public RegistrationType getRegistrationType() {
-		return registrationType;
+		return this.registrationType;
 	}
 
 	public void setRegistrationType(RegistrationType registrationType) {

@@ -15,7 +15,7 @@ public class AeronExtendedBindingProperties implements ExtendedBindingProperties
 	private Map<String,AeronBindingProperties> bindings = new HashMap<>();
 
 	public Map<String, AeronBindingProperties> getBindings() {
-		return bindings;
+		return this.bindings;
 	}
 
 	public void setBindings(Map<String, AeronBindingProperties> bindings) {
@@ -24,8 +24,8 @@ public class AeronExtendedBindingProperties implements ExtendedBindingProperties
 
 	@Override
 	public AeronConsumerProperties getExtendedConsumerProperties(String channelName) {
-		if (bindings.containsKey(channelName) && bindings.get(channelName).getConsumerProperties() != null) {
-			return bindings.get(channelName).getConsumerProperties();
+		if (this.bindings.containsKey(channelName) && this.bindings.get(channelName).getConsumer() != null) {
+			return this.bindings.get(channelName).getConsumer();
 		}
 		else {
 			return new AeronConsumerProperties();
@@ -34,8 +34,8 @@ public class AeronExtendedBindingProperties implements ExtendedBindingProperties
 
 	@Override
 	public AeronProducerProperties getExtendedProducerProperties(String channelName) {
-		if (bindings.containsKey(channelName) && bindings.get(channelName).getProducerProperties() != null) {
-			return bindings.get(channelName).getProducerProperties();
+		if (this.bindings.containsKey(channelName) && this.bindings.get(channelName).getProducer() != null) {
+			return this.bindings.get(channelName).getProducer();
 		}
 		else {
 			return new AeronProducerProperties();

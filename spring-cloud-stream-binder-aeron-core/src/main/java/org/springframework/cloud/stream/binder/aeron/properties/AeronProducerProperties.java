@@ -1,25 +1,51 @@
 package org.springframework.cloud.stream.binder.aeron.properties;
 
-import org.springframework.cloud.stream.binder.ExtendedConsumerProperties;
-import org.springframework.cloud.stream.binder.ExtendedProducerProperties;
-import org.springframework.cloud.stream.provisioning.ConsumerDestination;
-import org.springframework.cloud.stream.provisioning.ProducerDestination;
-import org.springframework.cloud.stream.provisioning.ProvisioningException;
-import org.springframework.cloud.stream.provisioning.ProvisioningProvider;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author Vinicius Carvalho
  */
-public class AeronProducerProperties implements ProvisioningProvider<ExtendedConsumerProperties<AeronConsumerProperties>, ExtendedProducerProperties<AeronProducerProperties>> {
+public class AeronProducerProperties{
 
-	@Override
-	public ProducerDestination provisionProducerDestination(String s, ExtendedProducerProperties<AeronProducerProperties> aeronProducerPropertiesExtendedProducerProperties) throws ProvisioningException {
-		return null;
+	private String controlHost = "localhost";
+
+	private Integer controlPort = -1;
+
+	private Integer streamId = 1;
+
+	private List<String> destinations = new LinkedList<>();
+
+	public String getControlHost() {
+		return this.controlHost;
 	}
 
-	@Override
-	public ConsumerDestination provisionConsumerDestination(String s, String s1, ExtendedConsumerProperties<AeronConsumerProperties> aeronConsumerPropertiesExtendedConsumerProperties) throws ProvisioningException {
-		return null;
+	public void setControlHost(String controlHost) {
+		this.controlHost = controlHost;
 	}
 
+	public Integer getControlPort() {
+		return this.controlPort;
+	}
+
+	public void setControlPort(Integer controlPort) {
+		this.controlPort = controlPort;
+	}
+
+	public Integer getStreamId() {
+		return this.streamId;
+	}
+
+	public void setStreamId(Integer streamId) {
+		this.streamId = streamId;
+	}
+
+	public List<String> getDestinations() {
+		return this.destinations;
+	}
+
+	public void setDestinations(List<String> destinations) {
+		this.destinations = destinations;
+	}
 }

@@ -16,23 +16,27 @@ public class AeronChannelInformation {
 	AeronChannelInformation() {
 	}
 
+	public static AeronChannelInformationBuilder newBuilder(){
+		return new AeronChannelInformationBuilder();
+	}
+
 	public Integer getPort() {
-		return port;
+		return this.port;
 	}
 
 	public String getHost() {
-		return host;
+		return this.host;
 	}
 
 	public Integer getStreamId() {
-		return streamId;
+		return this.streamId;
 	}
 
 	public String getDestinationName() {
-		return destinationName;
+		return this.destinationName;
 	}
 
-	public class AeronChannelInformationBuilder {
+	public static class AeronChannelInformationBuilder {
 		private AeronChannelInformation information = new AeronChannelInformation();
 
 		public AeronChannelInformationBuilder host(String host){
@@ -56,7 +60,7 @@ public class AeronChannelInformation {
 		}
 
 		public AeronChannelInformation build(){
-			return information;
+			return this.information;
 		}
 
 	}

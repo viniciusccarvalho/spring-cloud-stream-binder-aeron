@@ -5,22 +5,22 @@ package org.springframework.cloud.stream.binder.aeron.properties;
  */
 public class AeronBindingProperties {
 
-	private AeronConsumerProperties consumerProperties = new AeronConsumerProperties();
-	private AeronProducerProperties producerProperties = new AeronProducerProperties();
+	private AeronConsumerProperties consumer = new AeronConsumerProperties();
+	private AeronProducerProperties producer = new AeronProducerProperties();
 
-	public AeronConsumerProperties getConsumerProperties() {
-		return consumerProperties;
+	public AeronConsumerProperties getConsumer() {
+		return this.consumer;
 	}
 
-	public void setConsumerProperties(AeronConsumerProperties consumerProperties) {
-		this.consumerProperties = consumerProperties;
+	public void setConsumer(AeronConsumerProperties consumer) {
+		this.consumer = consumer;
 	}
 
-	public AeronProducerProperties getProducerProperties() {
-		return producerProperties;
+	public AeronProducerProperties getProducer() {
+		return this.producer;
 	}
 
-	public void setProducerProperties(AeronProducerProperties producerProperties) {
-		this.producerProperties = producerProperties;
+	public void setProducer(AeronProducerProperties producer) {
+		this.producer = producer;
 	}
 }

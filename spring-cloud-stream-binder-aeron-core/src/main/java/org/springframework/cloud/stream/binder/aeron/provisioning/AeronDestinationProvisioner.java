@@ -8,6 +8,7 @@ import org.springframework.cloud.stream.provisioning.ConsumerDestination;
 import org.springframework.cloud.stream.provisioning.ProducerDestination;
 import org.springframework.cloud.stream.provisioning.ProvisioningException;
 import org.springframework.cloud.stream.provisioning.ProvisioningProvider;
+import org.springframework.util.SocketUtils;
 
 /**
  * @author Vinicius Carvalho
@@ -19,7 +20,10 @@ public class AeronDestinationProvisioner implements
 	public ProducerDestination provisionProducerDestination(String name,
 			ExtendedProducerProperties<AeronProducerProperties> producerProperties)
 			throws ProvisioningException {
-		return null;
+		if(producerProperties.getExtension().getControlPort() == -1){
+			producerProperties.getExtension().setControlPort(SocketUtils.findAvailableTcpPort(43_000,43_100));
+		}
+		return new AeronProducerDestination(producerProperties.getExtension());
 	}
 
 	@Override
