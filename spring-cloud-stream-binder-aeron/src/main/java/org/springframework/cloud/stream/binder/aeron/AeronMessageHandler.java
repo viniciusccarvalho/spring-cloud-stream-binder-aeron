@@ -1,6 +1,9 @@
 package org.springframework.cloud.stream.binder.aeron;
 
 
+import java.util.HashSet;
+import java.util.Set;
+
 import io.aeron.Aeron;
 import io.aeron.Publication;
 import org.agrona.BufferUtil;
@@ -8,6 +11,9 @@ import org.agrona.concurrent.UnsafeBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.cloud.stream.binder.aeron.admin.AeronChannelInformation;
+import org.springframework.cloud.stream.binder.aeron.admin.DestinationRegistrationEvent;
+import org.springframework.cloud.stream.binder.aeron.admin.DestinationRegistrationListener;
 import org.springframework.cloud.stream.binder.aeron.provisioning.AeronProducerDestination;
 import org.springframework.integration.handler.AbstractMessageHandler;
 import org.springframework.messaging.Message;
@@ -15,7 +21,7 @@ import org.springframework.messaging.Message;
 /**
  * @author Vinicius Carvalho
  */
-public class AeronMessageHandler extends AbstractMessageHandler {
+public class AeronMessageHandler extends AbstractMessageHandler implements DestinationRegistrationListener{
 
 	private Publication publication;
 
@@ -25,9 +31,14 @@ public class AeronMessageHandler extends AbstractMessageHandler {
 
 	private Aeron aeron;
 
+	private Set<AeronChannelInformation> destinations = new HashSet<>();
+
+	private final String destinationName;
+
 	public AeronMessageHandler(AeronProducerDestination aeronProducerDestination, Aeron aeron) {
 		this.aeronProducerDestination = aeronProducerDestination;
 		this.aeron = aeron;
+		this.destinationName ="aeron.destination."+aeronProducerDestination.getChannelName();
 	}
 
 	@Override
@@ -75,4 +86,25 @@ public class AeronMessageHandler extends AbstractMessageHandler {
 		}
 	}
 
+	@Override
+	public void onEvent(DestinationRegistrationEvent event) {
+		logger.info("Event: {} for {}",event.getRegistrationType(),event.getInformation());
+		String endpoint = String.format("aeron:udp?endpoint=%s:%d", event.getInformation().getHost(),event.getInformation().getPort());
+		switch (event.getRegistrationType()){
+			case ONLINE:
+				if(!this.destinations.contains(event.getInformation())) {
+					this.publication.addDestination(endpoint);
+					this.destinations.add(event.getInformation());
+				}
+				break;
+			case OFFLINE:
+				this.destinations.remove(event.getInformation());
+				this.publication.removeDestination(endpoint);
+		}
+	}
+
+	@Override
+	public String getDestinationPattern() {
+		return destinationName;
+	}
 }

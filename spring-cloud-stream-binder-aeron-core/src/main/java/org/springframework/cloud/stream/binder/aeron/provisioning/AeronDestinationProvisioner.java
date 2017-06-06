@@ -23,7 +23,7 @@ public class AeronDestinationProvisioner implements
 		if(producerProperties.getExtension().getPort() == -1){
 			producerProperties.getExtension().setPort(SocketUtils.findAvailableTcpPort(43_000,43_100));
 		}
-		return new AeronProducerDestination(producerProperties.getExtension());
+		return new AeronProducerDestination(name,producerProperties.getExtension());
 	}
 
 	@Override
@@ -33,6 +33,6 @@ public class AeronDestinationProvisioner implements
 		if(consumerProperties.getExtension().getPort() == -1){
 			consumerProperties.getExtension().setPort(SocketUtils.findAvailableTcpPort(42_000,42_100));
 		}
-		return new AeronConsumerDestination(consumerProperties.getExtension());
+		return new AeronConsumerDestination(consumerProperties.getExtension(),name);
 	}
 }

@@ -21,5 +21,6 @@
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-stream-binder-aeron</artifactId>
 		</dependency>
+
 	</dependencies>
 </project>

@@ -11,10 +11,13 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.stream.binder.Binder;
 import org.springframework.cloud.stream.binder.aeron.AeronMessageChannelBinder;
+import org.springframework.cloud.stream.binder.aeron.admin.DestinationRegistryClient;
+import org.springframework.cloud.stream.binder.aeron.admin.RedisDestinationRegistryClient;
 import org.springframework.cloud.stream.binder.aeron.properties.AeronExtendedBindingProperties;
 import org.springframework.cloud.stream.binder.aeron.provisioning.AeronDestinationProvisioner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 
 /**
  * @author Vinicius Carvalho
@@ -29,6 +32,10 @@ public class AeronBinderAutoConfiguration {
 
 	@Autowired
 	private AeronExtendedBindingProperties extendedBindingProperties;
+
+	@Autowired
+	private RedisConnectionFactory redisConnectionFactory;
+
 
 	@Bean(destroyMethod = "close")
 	@ConditionalOnMissingBean
@@ -54,6 +61,15 @@ public class AeronBinderAutoConfiguration {
 	public AeronMessageChannelBinder binder() throws Exception {
 		AeronMessageChannelBinder binder = new AeronMessageChannelBinder(provisioningProvider(),aeron());
 		binder.setExtendedBindingProperties(this.extendedBindingProperties);
+		binder.setDestinationRegistryClient(destinationRegistryClient());
 		return binder;
 	}
+
+
+	@Bean
+	public DestinationRegistryClient destinationRegistryClient(){
+		RedisDestinationRegistryClient redisDestinationRegistryClient = new RedisDestinationRegistryClient(redisConnectionFactory);
+		return redisDestinationRegistryClient;
+	}
+
 }

@@ -13,19 +13,20 @@ public class AeronConsumerDestination implements ConsumerDestination {
 
 	private final String consumerConnection = "aeron:udp?endpoint=%s:%d";
 
-	private DestinationRegistryClient registryClient;
+	private String channelName;
 
-	public AeronConsumerDestination(AeronConsumerProperties consumerProperties) {
-		this(consumerProperties,null);
-	}
-
-	public AeronConsumerDestination(AeronConsumerProperties consumerProperties, DestinationRegistryClient registryClient) {
+	public AeronConsumerDestination(AeronConsumerProperties consumerProperties, String channelName) {
 		this.consumerProperties = consumerProperties;
-		this.registryClient = registryClient;
+		this.channelName = channelName;
 	}
+
 
 	@Override
 	public String getName() {
 		return String.format(this.consumerConnection, this.consumerProperties.getHost(), this.consumerProperties.getPort());
+	}
+
+	public String getChannelName() {
+		return channelName;
 	}
 }

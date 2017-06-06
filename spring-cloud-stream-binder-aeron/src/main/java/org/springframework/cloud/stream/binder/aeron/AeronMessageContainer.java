@@ -14,6 +14,7 @@ import org.agrona.concurrent.IdleStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.springframework.cloud.stream.binder.aeron.admin.DestinationRegistryClient;
 import org.springframework.integration.endpoint.MessageProducerSupport;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
@@ -45,6 +46,7 @@ public class AeronMessageContainer extends MessageProducerSupport {
 		logger.info("Starting subscription on {} streamId: {}",this.uri,this.streamId);
 		this.subscription = aeron.addSubscription(this.uri, this.streamId);
 		this.threadPool.submit(new Worker());
+
 	}
 
 	@Override
@@ -95,4 +97,6 @@ public class AeronMessageContainer extends MessageProducerSupport {
 				"End Of Stream image on %s streamId=%d sessionId=%d from %s",
 				subscription.channel(), subscription.streamId(), image.sessionId(), image.sourceIdentity()));
 	}
+
+
 }

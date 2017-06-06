@@ -5,7 +5,15 @@ package org.springframework.cloud.stream.binder.aeron.admin;
  */
 public class DestinationRegistrationEvent {
 	private AeronChannelInformation information;
+
 	private RegistrationType registrationType;
+
+	public DestinationRegistrationEvent(){}
+
+	public DestinationRegistrationEvent(AeronChannelInformation information, RegistrationType registrationType) {
+		this.information = information;
+		this.registrationType = registrationType;
+	}
 
 	public AeronChannelInformation getInformation() {
 		return this.information;

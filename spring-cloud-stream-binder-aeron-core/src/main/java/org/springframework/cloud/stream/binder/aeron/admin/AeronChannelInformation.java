@@ -1,17 +1,43 @@
 package org.springframework.cloud.stream.binder.aeron.admin;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonPOJOBuilder;
+
 /**
  * @author Vinicius Carvalho
  */
+@JsonDeserialize(builder = AeronChannelInformation.AeronChannelInformationBuilder.class)
 public class AeronChannelInformation {
 
-	private Integer port;
+	private Integer port = -1;
 
-	private String host;
+	private String host = "localhost";
 
 	private Integer streamId = 1;
 
-	private String destinationName;
+	private String destinationName = "";
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		AeronChannelInformation that = (AeronChannelInformation) o;
+
+		if (!port.equals(that.port)) return false;
+		if (!host.equals(that.host)) return false;
+		if (!streamId.equals(that.streamId)) return false;
+		return destinationName.equals(that.destinationName);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = port.hashCode();
+		result = 31 * result + host.hashCode();
+		result = 31 * result + streamId.hashCode();
+		result = 31 * result + destinationName.hashCode();
+		return result;
+	}
 
 	AeronChannelInformation() {
 	}
@@ -36,6 +62,7 @@ public class AeronChannelInformation {
 		return this.destinationName;
 	}
 
+	@JsonPOJOBuilder(withPrefix = "")
 	public static class AeronChannelInformationBuilder {
 		private AeronChannelInformation information = new AeronChannelInformation();
 

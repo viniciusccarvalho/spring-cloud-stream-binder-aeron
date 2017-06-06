@@ -5,4 +5,5 @@ package org.springframework.cloud.stream.binder.aeron.admin;
  */
 public interface DestinationRegistrationListener {
 	void onEvent(DestinationRegistrationEvent event);
+	String getDestinationPattern();
 }

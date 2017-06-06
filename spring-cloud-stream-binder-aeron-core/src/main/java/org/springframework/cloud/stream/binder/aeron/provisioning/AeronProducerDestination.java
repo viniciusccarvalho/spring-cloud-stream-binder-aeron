@@ -15,8 +15,11 @@ public class AeronProducerDestination implements ProducerDestination {
 
 	private AeronProducerProperties producerProperties;
 
-	public AeronProducerDestination(AeronProducerProperties producerProperties) {
+	private String channelName;
+
+	public AeronProducerDestination(String channelName, AeronProducerProperties producerProperties) {
 		this.producerProperties = producerProperties;
+		this.channelName = channelName;
 	}
 
 	@Override
@@ -38,5 +41,9 @@ public class AeronProducerDestination implements ProducerDestination {
 
 	public List<String> getDestinations(){
 		return Collections.unmodifiableList(this.producerProperties.getDestinations());
+	}
+
+	public String getChannelName() {
+		return channelName;
 	}
 }
