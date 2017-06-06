@@ -5,16 +5,18 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.PatternTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.data.redis.listener.Topic;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.scheduling.annotation.Scheduled;
 
 /**
  * @author Vinicius Carvalho
@@ -29,15 +31,17 @@ public class RedisDestinationRegistryClient implements DestinationRegistryClient
 
 	private static final Pattern KEY_PATTERN = Pattern.compile("(.*)\\.(\\w*);aeron:udp\\?endpoint=(\\w*):(\\d*)\\?streamId=(\\d*)");
 
-	private final String expires_pattern = "__keyevent@aeron.destination*__:expired";
+	public static final String expires_pattern = "__keyevent@*__:expired";
 
-	private final String set_pattern = "__keyevent@	aeron.destination*__:set";
+	public static final String set_pattern = "__keyevent@*__:set";
 
-	private RedisMessageListenerContainer container;
+	private Logger logger = LoggerFactory.getLogger(RedisDestinationRegistryClient.class);
 
 	private RedisConnectionFactory redisConnectionFactory;
 
 	private List<DestinationRegistrationListener> listeners = new LinkedList<>();
+
+	private List<AeronChannelInformation> registrationWatch = new LinkedList<>();
 
 	public RedisDestinationRegistryClient(RedisConnectionFactory redisConnectionFactory) {
 		this.redisTemplate = new RedisTemplate<>();
@@ -51,17 +55,16 @@ public class RedisDestinationRegistryClient implements DestinationRegistryClient
 	@Override
 	public void afterPropertiesSet() throws Exception {
 		this.redisTemplate.afterPropertiesSet();
-		this.container = new RedisMessageListenerContainer();
-		this.container.setConnectionFactory(redisConnectionFactory);
 		List<Topic> topics = new LinkedList<>();
-		topics.add( new PatternTopic(expires_pattern));
-		topics.add(new PatternTopic(set_pattern));
-		container.addMessageListener(this, topics);
-		container.afterPropertiesSet();
 	}
 
 	@Override
 	public void register(AeronChannelInformation channelInformation) {
+		this.registrationWatch.add(channelInformation);
+		store(channelInformation);
+	}
+
+	private void store(AeronChannelInformation channelInformation){
 		String key = toRedisKey(channelInformation);
 		redisTemplate.opsForValue().set(key,channelInformation);
 	}
@@ -93,6 +96,16 @@ public class RedisDestinationRegistryClient implements DestinationRegistryClient
 				listener.onEvent(event);
 			}
 		}
+	}
+
+	/**
+	 * Sets the key on redis to keep it alive
+	 */
+	@Scheduled(fixedRate = 5000)
+	public void ping(){
+		logger.info("Pinging server. {} watches configured", registrationWatch.size());
+
+		this.registrationWatch.forEach(this::store);
 	}
 
 	public static String toRedisKey(AeronChannelInformation information){

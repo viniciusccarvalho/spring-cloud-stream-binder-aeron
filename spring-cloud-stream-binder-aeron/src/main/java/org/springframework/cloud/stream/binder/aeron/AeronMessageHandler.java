@@ -94,6 +94,7 @@ public class AeronMessageHandler extends AbstractMessageHandler implements Desti
 			case ONLINE:
 				if(!this.destinations.contains(event.getInformation())) {
 					this.publication.addDestination(endpoint);
+					logger.info("Detected new subscriber for {}. Registering endpoint {}",event.getInformation().getDestinationName(),endpoint);
 					this.destinations.add(event.getInformation());
 				}
 				break;
