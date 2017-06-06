@@ -3,6 +3,7 @@ package org.springframework.cloud.stream.binder.aeron.admin;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,7 +69,7 @@ public class RedisDestinationRegistryClient implements DestinationRegistryClient
 
 	private void store(AeronChannelInformation channelInformation){
 		String key = toRedisKey(channelInformation);
-		redisTemplate.opsForValue().set(key,channelInformation);
+		redisTemplate.opsForValue().set(key,channelInformation,10, TimeUnit.SECONDS);
 	}
 
 	@Override
