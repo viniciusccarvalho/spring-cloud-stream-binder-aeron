@@ -38,7 +38,7 @@ public class AeronMessageHandler extends AbstractMessageHandler implements Desti
 	public AeronMessageHandler(AeronProducerDestination aeronProducerDestination, Aeron aeron) {
 		this.aeronProducerDestination = aeronProducerDestination;
 		this.aeron = aeron;
-		this.destinationName ="aeron.destination."+aeronProducerDestination.getChannelName();
+		this.destinationName ="aeron.destinationName."+aeronProducerDestination.getChannelName();
 	}
 
 	@Override
@@ -46,8 +46,11 @@ public class AeronMessageHandler extends AbstractMessageHandler implements Desti
 		logger.info("Binding Control port at : {}",this.aeronProducerDestination.getName());
 		this.publication = this.aeron.addPublication(this.aeronProducerDestination.getName(),this.aeronProducerDestination.getStreamId());
 		for(String destination : aeronProducerDestination.getDestinations()){
-			logger.info("Adding destination: {}",destination);
+			logger.debug("Adding destinationName: {}",destination);
 			this.publication.addDestination(destination);
+		}
+		for(AeronChannelInformation information : this.destinations){
+			this.publication.addDestination(String.format("aeron:udp?endpoint=%s:%d", information.getHost(),information.getPort()));
 		}
 	}
 
@@ -86,19 +89,24 @@ public class AeronMessageHandler extends AbstractMessageHandler implements Desti
 		}
 	}
 
+	public void addDestination(AeronChannelInformation information){
+		this.destinations.add(information);
+	}
+
 	@Override
 	public void onEvent(DestinationRegistrationEvent event) {
-		logger.info("Event: {} for {}",event.getRegistrationType(),event.getInformation());
+		logger.debug("Event: {} for {}",event.getRegistrationType(),event.getInformation());
 		String endpoint = String.format("aeron:udp?endpoint=%s:%d", event.getInformation().getHost(),event.getInformation().getPort());
 		switch (event.getRegistrationType()){
 			case ONLINE:
 				if(!this.destinations.contains(event.getInformation())) {
 					this.publication.addDestination(endpoint);
-					logger.info("Detected new subscriber for {}. Registering endpoint {}",event.getInformation().getDestinationName(),endpoint);
+					logger.debug("Detected new subscriber for {}. Registering endpoint {}",event.getInformation().getDestinationName(),endpoint);
 					this.destinations.add(event.getInformation());
 				}
 				break;
 			case OFFLINE:
+				logger.debug("Removing destinationName : {}",endpoint);
 				this.destinations.remove(event.getInformation());
 				this.publication.removeDestination(endpoint);
 		}

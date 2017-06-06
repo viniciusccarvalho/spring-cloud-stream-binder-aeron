@@ -76,7 +76,7 @@ public class AeronChannelInformation {
 			return this;
 		}
 
-		public AeronChannelInformationBuilder destination(String destination){
+		public AeronChannelInformationBuilder destinationName(String destination){
 			this.information.destinationName = destination;
 			return this;
 		}

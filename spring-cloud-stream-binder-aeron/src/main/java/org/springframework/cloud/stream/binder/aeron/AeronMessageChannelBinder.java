@@ -1,5 +1,7 @@
 package org.springframework.cloud.stream.binder.aeron;
 
+import java.util.List;
+
 import io.aeron.Aeron;
 
 import org.springframework.cloud.stream.binder.AbstractMessageChannelBinder;
@@ -7,6 +9,7 @@ import org.springframework.cloud.stream.binder.ExtendedConsumerProperties;
 import org.springframework.cloud.stream.binder.ExtendedProducerProperties;
 import org.springframework.cloud.stream.binder.ExtendedPropertiesBinder;
 import org.springframework.cloud.stream.binder.aeron.admin.AeronChannelInformation;
+import org.springframework.cloud.stream.binder.aeron.admin.AeronUtils;
 import org.springframework.cloud.stream.binder.aeron.admin.DestinationRegistryClient;
 import org.springframework.cloud.stream.binder.aeron.properties.AeronConsumerProperties;
 import org.springframework.cloud.stream.binder.aeron.properties.AeronExtendedBindingProperties;
@@ -46,8 +49,14 @@ public class AeronMessageChannelBinder extends AbstractMessageChannelBinder<Exte
 
 	@Override
 	protected MessageHandler createProducerMessageHandler(ProducerDestination producerDestination, ExtendedProducerProperties<AeronProducerProperties> extendedProducerProperties) throws Exception {
-		AeronMessageHandler messageHandler = new AeronMessageHandler((AeronProducerDestination)producerDestination,aeron);
+		AeronProducerDestination aeronProducerDestination = (AeronProducerDestination)producerDestination;
+		AeronMessageHandler messageHandler = new AeronMessageHandler(aeronProducerDestination,aeron);
+
 		if(this.destinationRegistryClient != null){
+			List<AeronChannelInformation> registeredDestinations = destinationRegistryClient.locate(aeronProducerDestination.getChannelName());
+			for(AeronChannelInformation information : registeredDestinations){
+				messageHandler.addDestination(information);
+			}
 			this.destinationRegistryClient.registerListerner(messageHandler);
 		}
 		return messageHandler;
@@ -61,7 +70,7 @@ public class AeronMessageChannelBinder extends AbstractMessageChannelBinder<Exte
 					.host(consumerProperties.getExtension().getHost())
 					.port(consumerProperties.getExtension().getPort())
 					.streamId(consumerProperties.getExtension().getStreamId())
-					.destination(((AeronConsumerDestination)consumerDestination).getChannelName()).build();
+					.destinationName(((AeronConsumerDestination)consumerDestination).getChannelName()).build();
 			this.destinationRegistryClient.register(information);
 		}
 		return messageContainer;

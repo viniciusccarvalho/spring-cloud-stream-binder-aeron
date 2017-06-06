@@ -25,6 +25,7 @@ public class AeronLogApplication {
 
 	@StreamListener(Sink.INPUT)
 	public void onMessage(Message<?> message){
-		logger.info(message.toString());
+		logger.info("Received message : " + message.toString());
+		logger.info("Contents: " + new String((byte[])message.getPayload()));
 	}
 }

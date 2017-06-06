@@ -1,5 +1,6 @@
 package org.springframework.cloud.stream.binder.aeron.admin;
 
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -17,6 +18,7 @@ import org.springframework.data.redis.listener.Topic;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @author Vinicius Carvalho
@@ -71,7 +73,12 @@ public class RedisDestinationRegistryClient implements DestinationRegistryClient
 
 	@Override
 	public List<AeronChannelInformation> locate(String destinationName) {
-		return null;
+		Collection<String> keys = redisTemplate.keys(PREFIX+"."+destinationName+"*");
+		List<AeronChannelInformation> destinations = new LinkedList<>();
+		if(!CollectionUtils.isEmpty(keys)){
+			destinations = redisTemplate.opsForValue().multiGet(keys);
+		}
+		return destinations;
 	}
 
 	@Override
@@ -103,8 +110,7 @@ public class RedisDestinationRegistryClient implements DestinationRegistryClient
 	 */
 	@Scheduled(fixedRate = 5000)
 	public void ping(){
-		logger.info("Pinging server. {} watches configured", registrationWatch.size());
-
+		logger.debug("Pinging server. {} configured destinations", registrationWatch.size());
 		this.registrationWatch.forEach(this::store);
 	}
 
@@ -116,7 +122,7 @@ public class RedisDestinationRegistryClient implements DestinationRegistryClient
 		Matcher matcher = KEY_PATTERN.matcher(key);
 		AeronChannelInformation information = null;
 		if(matcher.matches()){
-			information = AeronChannelInformation.newBuilder().destination(matcher.group(2))
+			information = AeronChannelInformation.newBuilder().destinationName(matcher.group(2))
 					.host(matcher.group(3))
 					.port(Integer.valueOf(matcher.group(4)))
 					.streamId(Integer.valueOf(matcher.group(5))).build();

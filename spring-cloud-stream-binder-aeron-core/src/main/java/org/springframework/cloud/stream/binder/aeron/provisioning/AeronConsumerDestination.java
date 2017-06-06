@@ -1,7 +1,6 @@
 package org.springframework.cloud.stream.binder.aeron.provisioning;
 
 import org.springframework.cloud.stream.binder.aeron.admin.AeronUtils;
-import org.springframework.cloud.stream.binder.aeron.admin.DestinationRegistryClient;
 import org.springframework.cloud.stream.binder.aeron.properties.AeronConsumerProperties;
 import org.springframework.cloud.stream.provisioning.ConsumerDestination;
 

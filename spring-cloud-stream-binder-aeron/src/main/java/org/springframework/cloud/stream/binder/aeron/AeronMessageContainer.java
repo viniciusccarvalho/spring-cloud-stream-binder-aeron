@@ -37,16 +37,14 @@ public class AeronMessageContainer extends MessageProducerSupport {
 		this.aeron = aeron;
 		this.uri = uri;
 		this.streamId = streamId;
-		logger.info("Creating Aeron container listening at : {}",uri);
+		logger.info("Creating Aeron container listening at : {} for stream: {}",uri,streamId);
 	}
 
 	@Override
 	protected void doStart() {
 		this.running.set(true);
-		logger.info("Starting subscription on {} streamId: {}",this.uri,this.streamId);
 		this.subscription = aeron.addSubscription(this.uri, this.streamId);
 		this.threadPool.submit(new Worker());
-
 	}
 
 	@Override
